@@ -17,8 +17,8 @@ public class Lancamento {
     @Column(name = "data_vencimento")
     private LocalDate dataVencimento;
 
-    @Column(name = "data_lancamento")
-    private LocalDate dataLancamento;
+    @Column(name = "data_pagamento")
+    private LocalDate dataPagamento;
 
     private BigDecimal valor;
 
@@ -43,7 +43,7 @@ public class Lancamento {
         return Objects.equals(codigo, that.codigo) &&
                 Objects.equals(descricao, that.descricao) &&
                 Objects.equals(dataVencimento, that.dataVencimento) &&
-                Objects.equals(dataLancamento, that.dataLancamento) &&
+                Objects.equals(dataPagamento, that.dataPagamento) &&
                 Objects.equals(valor, that.valor) &&
                 Objects.equals(observacao, that.observacao) &&
                 tipo == that.tipo &&
@@ -53,7 +53,7 @@ public class Lancamento {
 
     @Override
     public int hashCode() {
-        return Objects.hash(codigo, descricao, dataVencimento, dataLancamento, valor, observacao, tipo, categoria, pessoa);
+        return Objects.hash(codigo, descricao, dataVencimento, dataPagamento, valor, observacao, tipo, categoria, pessoa);
     }
 
     public Long getCodigo() {
@@ -81,11 +81,11 @@ public class Lancamento {
     }
 
     public LocalDate getDataPagamento() {
-        return dataLancamento;
+        return dataPagamento;
     }
 
     public void setDataPagamento(LocalDate dataPagamento) {
-        this.dataLancamento = dataPagamento;
+        this.dataPagamento = dataPagamento;
     }
 
     public BigDecimal getValor() {
