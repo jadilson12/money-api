@@ -18,6 +18,9 @@ public class Pessoa {
     @NotNull
     private Boolean ativo;
 
+    @Embedded
+    private Endereco endereco;
+
     public Endereco getEndereco() {
         return endereco;
     }
@@ -25,9 +28,6 @@ public class Pessoa {
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
-
-    @Embedded
-    private Endereco endereco;
 
     public Boolean getAtivo() {
         return ativo;
