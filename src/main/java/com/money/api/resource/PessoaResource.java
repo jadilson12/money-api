@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/pessoas")
-public class PessoaResouce {
+public class PessoaResource {
 
     @Autowired
     private PessoaRepository pessoaRepository;
@@ -65,4 +65,9 @@ public class PessoaResouce {
         return ResponseEntity.ok(pessoaSalva);
     }
 
+    @PutMapping("/{codigo}/ativo")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizarAtivo(@PathVariable Long codigo, @RequestBody boolean ativo) {
+        pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
+    }
 }

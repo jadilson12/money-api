@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class PessoaService {
 
@@ -15,12 +13,24 @@ public class PessoaService {
     private PessoaRepository pessoaRepository;
 
     public Pessoa atualizar(Long codigo, Pessoa pessoa) {
-        Optional<Pessoa> pessoaSalva = pessoaRepository.findById(codigo);
+        Pessoa pessoaSalva = buscarPessoaPeloCodigo(codigo);
 
-        if (pessoaSalva.isEmpty()) {
+        if (pessoaSalva == null) {
             throw new EmptyResultDataAccessException(1);
         }
         pessoa.setCodigo(codigo);
         return pessoaRepository.save(pessoa);
+    }
+
+    public void atualizarPropriedadeAtivo(Long codigo, Boolean ativo) {
+        Pessoa pessoaSalva = buscarPessoaPeloCodigo(codigo);
+        pessoaSalva.setAtivo(ativo);
+        pessoaRepository.save(pessoaSalva);
+    }
+
+    private Pessoa buscarPessoaPeloCodigo(Long codigo) {
+
+        return this.pessoaRepository.findById(codigo)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 }

@@ -31,7 +31,7 @@ public class MoneyExceptionRenderer extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         String messageUsuario = messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale());
-        String messageDesenvolvedor = ex.getCause().toString();
+        String messageDesenvolvedor = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
         List<Erro> erros = Arrays.asList(new Erro(messageUsuario, messageDesenvolvedor));
         return handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
     }
