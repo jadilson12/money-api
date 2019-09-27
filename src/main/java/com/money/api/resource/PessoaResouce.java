@@ -3,6 +3,7 @@ package com.money.api.resource;
 import com.money.api.event.RecursoCriandoEvent;
 import com.money.api.model.Pessoa;
 import com.money.api.repository.PessoaRepository;
+import com.money.api.services.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,9 @@ public class PessoaResouce {
 
     @Autowired
     private ApplicationEventPublisher publisher;
+
+    @Autowired
+    private PessoaService pessoaService;
 
     @GetMapping
     public List<Pessoa> lista() {
@@ -51,10 +55,14 @@ public class PessoaResouce {
     @DeleteMapping("/{codigo}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Pessoa> remover(@PathVariable Long codigo) {
-
         pessoaRepository.deleteById(codigo);
-
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{codigo}")
+    public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
+        Pessoa pessoaSalva = pessoaService.atualizar(codigo, pessoa);
+        return ResponseEntity.ok(pessoaSalva);
     }
 
 }
