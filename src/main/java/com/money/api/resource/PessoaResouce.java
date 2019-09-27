@@ -23,20 +23,20 @@ import java.util.Optional;
 public class PessoaResouce {
 
     @Autowired
-    private PessoaRepository pessoaReposytory;
+    private PessoaRepository pessoaRepository;
 
     @Autowired
     private ApplicationEventPublisher publisher;
 
     @GetMapping
     public List<Pessoa> lista() {
-        return pessoaReposytory.findAll();
+        return pessoaRepository.findAll();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
-        Pessoa pessoaSalva = pessoaReposytory.save(pessoa);
+        Pessoa pessoaSalva = pessoaRepository.save(pessoa);
         publisher.publishEvent(new RecursoCriandoEvent(this, response, pessoaSalva.getCodigo()));
         return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
 
@@ -44,11 +44,20 @@ public class PessoaResouce {
 
     @GetMapping("/{codigo}")
     public ResponseEntity<Pessoa> buscarByCodigo (@PathVariable  Long codigo) {
-        Optional<Pessoa> pessoaAtualiza = pessoaReposytory.findById(codigo);
+        Optional<Pessoa> pessoaAtualiza = pessoaRepository.findById(codigo);
         if (pessoaAtualiza.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return  ResponseEntity.ok(pessoaAtualiza.get());
+    }
+
+    @DeleteMapping("/{codigo}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Pessoa>  remover(@PathVariable Long codigo) {
+
+        pessoaRepository.deleteById(codigo);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
