@@ -81,7 +81,7 @@ public class MoneyExceptionRenderer extends ResponseEntityExceptionHandler {
         private String menssagemUsuario;
         private String messageDesenvolvedor;
 
-        Erro(String menssagemUsuario, String messageDesenvolvedor) {
+        public Erro(String menssagemUsuario, String messageDesenvolvedor) {
             this.menssagemUsuario = menssagemUsuario;
             this.messageDesenvolvedor = messageDesenvolvedor;
         }
