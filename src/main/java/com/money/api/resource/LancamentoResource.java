@@ -67,4 +67,10 @@ public class LancamentoResource {
         List<MoneyExceptionRenderer.Erro> erros = Arrays.asList(new MoneyExceptionRenderer.Erro(messageUsuario, messageDesenvolvedor));
         return ResponseEntity.badRequest().body(erros);
     }
+
+    @DeleteMapping("/{codigo}")
+    public ResponseEntity<Lancamento> remover(@PathVariable @RequestBody Long codigo) {
+        lancamentoRepository.deleteById(codigo);
+        return ResponseEntity.noContent().build();
+    }
 }
