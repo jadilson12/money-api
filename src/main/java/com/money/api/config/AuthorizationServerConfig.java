@@ -12,6 +12,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import static org.hibernate.criterion.Restrictions.and;
+
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
@@ -22,12 +24,21 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("angular")
-                .secret("@ngul@r0")
-                .scopes("read", "write")
-                .authorizedGrantTypes("password", "refresh_token")
-                .accessTokenValiditySeconds(20)
-                .refreshTokenValiditySeconds(3600 * 24);
+                    .withClient("angular")
+                    .secret("@ngul@r0")
+                    .scopes("read", "write")
+                    .authorizedGrantTypes("password", "refresh_token")
+                    .accessTokenValiditySeconds(1800)
+                    .refreshTokenValiditySeconds(3600 * 24)
+                .and()
+                    .withClient("mobile")
+                    .secret("m0b1l30")
+                    .scopes("read")
+                    .authorizedGrantTypes("password", "refresh_token")
+                    .accessTokenValiditySeconds(1800)
+                    .refreshTokenValiditySeconds(3600 * 24);
+
+
     }
 
     @Override
