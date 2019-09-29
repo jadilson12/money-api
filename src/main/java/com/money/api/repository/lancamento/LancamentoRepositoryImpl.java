@@ -1,8 +1,11 @@
 package com.money.api.repository.lancamento;
 
+import com.money.api.model.Categoria_;
 import com.money.api.model.Lancamento;
 import com.money.api.model.Lancamento_;
+import com.money.api.model.Pessoa_;
 import com.money.api.repository.filter.LancamentoFilter;
+import com.money.api.repository.projection.ResumoLancamento;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,7 +37,28 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
         criteria.where(predicates);
 
         TypedQuery<Lancamento> query = manager.createQuery(criteria);
+        adicionarRestricoesNaPaginacao(query, pageable);
 
+        return new PageImpl<>(query.getResultList(), pageable, total(lancamentoFilter));
+    }
+
+    @Override
+    public Page<ResumoLancamento> resumir(LancamentoFilter lancamentoFilter, Pageable pageable) {
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+        CriteriaQuery<ResumoLancamento> criteria = builder.createQuery(ResumoLancamento.class);
+        Root<Lancamento> root = criteria.from(Lancamento.class);
+
+        criteria.select(builder.construct(ResumoLancamento.class
+                , root.get(Lancamento_.codigo), root.get(Lancamento_.descricao)
+                , root.get(Lancamento_.dataVencimento), root.get(Lancamento_.dataPagamento)
+                , root.get(Lancamento_.valor), root.get(Lancamento_.tipo)
+                , root.get(Lancamento_.categoria).get(Categoria_.nome)
+                , root.get(Lancamento_.pessoa).get(Pessoa_.nome)
+        ));
+        Predicate[] predicates = criarRestricoes(lancamentoFilter, builder, root);
+        criteria.where(predicates);
+
+        TypedQuery<ResumoLancamento> query = manager.createQuery(criteria);
         adicionarRestricoesNaPaginacao(query, pageable);
 
         return new PageImpl<>(query.getResultList(), pageable, total(lancamentoFilter));
@@ -55,14 +79,13 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
         }
 
         if (lancamentoFilter.getDataVencimentoAte() != null) {
-
             predicates.add(
                     builder.lessThanOrEqualTo(root.get(Lancamento_.dataVencimento), lancamentoFilter.getDataVencimentoAte()));
         }
         return predicates.toArray(new Predicate[predicates.size()]);
     }
 
-    private void adicionarRestricoesNaPaginacao(TypedQuery<Lancamento> query, Pageable pageable) {
+    private void adicionarRestricoesNaPaginacao(TypedQuery<?> query, Pageable pageable) {
         int paginaAtual = pageable.getPageNumber();
         int totalRegistrosPorPagina = pageable.getPageSize();
         int primeiroRegistroDaPagina = paginaAtual * totalRegistrosPorPagina;
