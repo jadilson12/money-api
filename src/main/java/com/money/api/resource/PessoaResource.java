@@ -6,6 +6,8 @@ import com.money.api.repository.PessoaRepository;
 import com.money.api.services.PessoaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,12 +30,6 @@ public class PessoaResource {
     @Autowired
     private PessoaService pessoaService;
 
-    @GetMapping
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA') and  #oauth2.hasScope('read')")
-    public List<Pessoa> lista() {
-        return pessoaRepository.findAll();
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and  #oauth2.hasScope('write')")
@@ -42,7 +38,6 @@ public class PessoaResource {
         publisher.publishEvent(new RecursoCriandoEvent(this, response, pessoaSalva.getCodigo()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
-
     }
 
     @GetMapping("/{codigo}")
@@ -76,4 +71,11 @@ public class PessoaResource {
     public void atualizarAtivo(@PathVariable Long codigo, @RequestBody boolean ativo) {
         pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
     }
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
+    public Page<Pessoa> pesquisar(@RequestParam(required = false, defaultValue = "%") String nome, Pageable pageable) {
+        return pessoaRepository.findByNomeContaining(nome, pageable);
+    }
+
 }
