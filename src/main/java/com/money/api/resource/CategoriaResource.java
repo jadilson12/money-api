@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/categorias")
@@ -41,7 +40,7 @@ public class CategoriaResource {
     }
 
     @GetMapping("/{codigo}")
-    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and  #oauth2.hasScope('read')" )
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and  #oauth2.hasScope('read')")
     public ResponseEntity<Categoria> buscarByCodigo(@PathVariable Long codigo) {
         Categoria categoria = categoriaRepository.findOne(codigo);
         if (categoria != null) {
