@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/lancamentos")
@@ -46,11 +45,11 @@ public class LancamentoResource {
 
     @GetMapping("/{codigo}")
     public ResponseEntity<Lancamento> buscarByCodigo(@PathVariable Long codigo) {
-        Optional<Lancamento> lancamentoShow = lancamentoRepository.findById(codigo);
-        if (lancamentoShow.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        Lancamento lancamentoShow = lancamentoRepository.findOne(codigo);
+        if (lancamentoShow != null) {
+            return ResponseEntity.ok(lancamentoShow);
         }
-        return ResponseEntity.ok(lancamentoShow.get());
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
@@ -72,7 +71,7 @@ public class LancamentoResource {
 
     @DeleteMapping("/{codigo}")
     public ResponseEntity<Lancamento> remover(@PathVariable @RequestBody Long codigo) {
-        lancamentoRepository.deleteById(codigo);
+        lancamentoRepository.delete(codigo);
         return ResponseEntity.noContent().build();
     }
 }
